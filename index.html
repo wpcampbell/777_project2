@@ -11,8 +11,9 @@
     <!--[if IE<9]>
         <link rel="stylesheet" href="css/style.ie.css">
     <![endif]-->
-
+    
     <script type="module">
+      // add Bootstrap to be mobile friendly
       import { Toast } from 'bootstrap.esm.min.js'
     
       Array.from(document.querySelectorAll('.toast'))
@@ -20,6 +21,7 @@
     </script>
 
     <style>
+      /* style for map view  */
       html,
       body,
       #viewDiv {
@@ -29,11 +31,12 @@
         width: 100%;
       }
     </style>
-
+    <!-- load basemap -->
     <link rel="stylesheet" href="https://js.arcgis.com/4.22/esri/themes/light/main.css">
     <script src="https://js.arcgis.com/4.22/"></script>
 
     <script>
+      // require function for widgets
       require(["esri/config",
               "esri/Map", 
               "esri/views/MapView", 
@@ -58,13 +61,13 @@
                 Home,
                 Directions,
                 LayerList) {
-
+        //API KEY          
         esriConfig.apiKey = "AAPKf09779fada8e4edbaf17b893c40401a8jj7qpoWo6aq3GQgPw_-e7pWeaZY4XbcBiYua2Mc3-YV7Jd1JkLZV0l33TGImMRGQ";
-
+        //map           
         const map = new Map({
           basemap: "arcgis-topographic" // Basemap layer service
         });
-
+        //view
         const view = new MapView({
           map: map,
           center: [-103.4591,43.8791], // Longitude, latitude
@@ -72,6 +75,62 @@
           container: "viewDiv" // Div element
         });
 
+        // facilities renderer
+        const facilitiesRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "http://static.arcgis.com/images/Symbols/NPS/npsPictograph_0231b.png",
+          "width": "18px",
+          "height": "18px"
+        }
+      }
+      
+      const facilityLabels = {
+        symbol: {
+          type: "text",
+          color: "#FFFFFF",
+          haloColor: "#5E8D74",
+          haloSize: "2px",
+          font: {
+            size: "12px",
+            family: "Noto Sans",
+            style: "italic",
+            weight: "normal"
+          }
+        },
+
+        labelPlacement: "above-center",
+        labelExpressionInfo: {
+          expression: "$feature.fac_type"
+        }
+      };
+
+        //mount rushmore facility points
+        const mount_rushmore_facilities = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mt_rushmore_facilities/FeatureServer",
+        renderer: facilitiesRenderer,
+        // labelingInfo: [facilityLabels]
+        });
+        
+
+        map.add(mount_rushmore_facilities);
+
+        
+
+        //mount rushmore road lines
+        const mount_rushmore_road = new FeatureLayer({
+          url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_road/FeatureServer"
+        });
+
+        map.add(mount_rushmore_road)
+        //mount rushmore trails lines
+        const mount_rushmore_trails = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_trails/FeatureServer"
+       });
+
+       map.add(mount_rushmore_trails)
+       //layer control list widget
         view.when(() => {
           const layerList = new LayerList({
             view: view
@@ -80,13 +139,13 @@
           // Add widget to the top right corner of the view
           view.ui.add(layerList, "top-right");
         });
-        
-        let directionsWidget = new Directions({
-          view: view
-        });
+        //directions widget (pending)
+        // let directionsWidget = new Directions({
+        //   view: view
+        // });
 
-        view.ui.add(directionsWidget, "bottom-left")
-
+        // view.ui.add(directionsWidget, "bottom-left")
+        //user location widget
         const locate = new Locate({
           view: view,
           useHeadingsEnabled: false,
@@ -95,7 +154,7 @@
             return view.goTo(options.target);
           }
         });
-
+        //user tracking widget
         const track = new Track({
           view: view,
           graphic: new Graphic({
@@ -114,18 +173,18 @@
         view.ui.add(track, "top-left");
 
         view.ui.add(locate, "top-left")
-
+        // home view widget
         let homeWidget = new Home({
           view:view
         });
 
         view.ui.add(homeWidget, "top-left");
-
+        // mount rushmore geology info popup
         const geologyPopup = {
           "title": "Mount Rushmore Geology",
           "content": "<b>Geology Type:</b> {geology_co} <br>"
         };
-
+        //geology style
         function createFillSymbol(value, color) {
         return {
           "value": value,
@@ -140,7 +199,7 @@
           "label": value
         };
       }
-
+      //geology types renderer
       const openSpacesRenderer = {
         type: "unique-value",
         field: "geology_co",
@@ -153,7 +212,7 @@
         ]
       };
 
-
+        // mount rushmore geology feature layer
         const mt_rushmore_geology_1 = new FeatureLayer({
           url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mt_rushmore_geology_1/FeatureServer?token=5xtchRfJgL5qJACgxW0-NUU8DlYZ01S2Pux9WsukAi5a_DUdZamMzkdWwBHkQ7ei6A_jg0tnY_lLwS-s82_CJKgY9XBne6q6nUXURnRWLH4CGMDkAiExY1Ly-F_-ROYnRqiTgpQMGtJ8kxcAHdBXL6bL5f9tpO3syxjT7H_vut6wJZLP_cQU14JfXNIRIooHzLNYhbeYEvm-IaqJrusHLD6KK0lNTLSDC4RwJpnuakooIlUc13Cwk3yC5Ea5wolr6OmrACjLdxCvVvM0eU2ftA..",
           opacity:0.75,
@@ -165,14 +224,14 @@
   });
 
           map.add(mt_rushmore_geology_1, 0);
-
+        //mount rushmore boundary feature layer
         const mount_rushmore_boundary_1 = new FeatureLayer({
           url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_boundary_1_view/FeatureServer",
           opacity: 0.2
         });
         
           map.add(mount_rushmore_boundary_1)
-
+        //map legend widget
         let legend = new Legend({
           view: view
         });
@@ -186,6 +245,7 @@
   </head>
   <body>
      <!--put your initial page content here-->
+     <!--Website title-->
      <h1>Mount Rushmore Map Guide</h1>
      <div id="viewDiv"></div>
 
