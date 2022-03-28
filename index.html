@@ -47,7 +47,8 @@
               "esri/Graphic",
               "esri/widgets/Home",
               "esri/widgets/Directions",
-              "esri/widgets/LayerList"], 
+              "esri/widgets/LayerList",
+              "esri/widgets/FeatureForm"], 
               
               function (
                 esriConfig,
@@ -60,7 +61,8 @@
                 Graphic,
                 Home,
                 Directions,
-                LayerList) {
+                LayerList,
+                FeatureForm) {
         //API KEY          
         esriConfig.apiKey = "AAPKf09779fada8e4edbaf17b893c40401a8jj7qpoWo6aq3GQgPw_-e7pWeaZY4XbcBiYua2Mc3-YV7Jd1JkLZV0l33TGImMRGQ";
         //map           
@@ -70,47 +72,46 @@
         //view
         const view = new MapView({
           map: map,
-          center: [-103.4591,43.8791], // Longitude, latitude
-          zoom: 14, // Zoom level
+          center: [-103.45,43.8791], // Longitude, latitude
+          zoom: 15, // Zoom level
           container: "viewDiv" // Div element
         });
-
-        // facilities renderer
-        const facilitiesRenderer = {
-        "type": "simple",
-        "symbol": {
-          "type": "picture-marker",
-          "url": "http://static.arcgis.com/images/Symbols/NPS/npsPictograph_0231b.png",
-          "width": "18px",
-          "height": "18px"
-        }
+        //things to add:
+        //1.symbols for facilities
+        //2.FeatureForm to allow users to edit the reports
+        const popupFacilities = {
+        "title": "Facilities",
+        "content": "<b>Facility type:</b> {fac_type}"
       }
-      
-      const facilityLabels = {
+
+        const trailsRenderer = {
+        type: "simple",
         symbol: {
-          type: "text",
-          color: "#FFFFFF",
-          haloColor: "#5E8D74",
-          haloSize: "2px",
-          font: {
-            size: "12px",
-            family: "Noto Sans",
-            style: "italic",
-            weight: "normal"
-          }
+          color: "black",
+          type: "simple-line",
+          style: "solid"
         },
 
-        labelPlacement: "above-center",
-        labelExpressionInfo: {
-          expression: "$feature.fac_type"
-        }
+      
       };
 
+      const roadsRenderer = {
+        type: "simple",
+        symbol: {
+          color: "white",
+          type: "simple-line",
+          style: "solid"
+        },
+
+      
+      };
+
+      
         //mount rushmore facility points
         const mount_rushmore_facilities = new FeatureLayer({
         url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mt_rushmore_facilities/FeatureServer",
-        renderer: facilitiesRenderer,
-        // labelingInfo: [facilityLabels]
+        outFields: ["fac_type"],
+        popupTemplate: popupFacilities
         });
         
 
@@ -120,13 +121,15 @@
 
         //mount rushmore road lines
         const mount_rushmore_road = new FeatureLayer({
-          url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_road/FeatureServer"
+          url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_road/FeatureServer",
+          renderer:roadsRenderer
         });
 
         map.add(mount_rushmore_road)
         //mount rushmore trails lines
         const mount_rushmore_trails = new FeatureLayer({
-        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_trails/FeatureServer"
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_trails/FeatureServer",
+        renderer:trailsRenderer
        });
 
        map.add(mount_rushmore_trails)
@@ -137,7 +140,7 @@
           });
 
           // Add widget to the top right corner of the view
-          view.ui.add(layerList, "top-right");
+          view.ui.add(layerList, "bottom-left");
         });
         //directions widget (pending)
         // let directionsWidget = new Directions({
@@ -236,7 +239,7 @@
           view: view
         });
 
-        view.ui.add(legend, "bottom-right");
+        view.ui.add(legend, "top-right");
 
 
       });
