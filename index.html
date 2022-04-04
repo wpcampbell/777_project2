@@ -79,6 +79,26 @@
         //things to add:
         //1.symbols for facilities
         //2.FeatureForm to allow users to edit the reports
+
+
+
+        // park safety popup
+        const popupParkSafety = {
+          "title": "Park Safety Hazard",
+          "content": "<b>Description: </b> {descriptio} <br> <b>Name: </b> {reporter} <br> <b>Type: </b> {type} <br> <b>Date: </b> {date} <br> <b>Time Reported: </b> {time}"
+        }
+
+
+        const trailheadsRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "https://cdn.arcgis.com/sharing/rest/content/items/220936cc6ed342c9937abd8f180e7d1e/resources/styles/thumbnails/push-pin-1.png",
+          "width": "64px",
+          "height": "64px"
+        }
+      }
+
         const popupFacilities = {
         "title": "Facilities",
         "content": "<b>Facility type:</b> {fac_type}"
@@ -107,6 +127,16 @@
       };
 
       
+        //park safety editable points
+        const parkSafety = new FeatureLayer({
+          url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/parkSafety/FeatureServer",
+          renderer: trailheadsRenderer,
+          outFields: ["descriptio", "reporter", "type", "date", "time"],
+          popupTemplate: popupParkSafety
+        });
+
+        map.add(parkSafety)
+
         //mount rushmore facility points
         const mount_rushmore_facilities = new FeatureLayer({
         url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mt_rushmore_facilities/FeatureServer",
@@ -124,6 +154,8 @@
           url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mount_rushmore_road/FeatureServer",
           renderer:roadsRenderer
         });
+
+        
 
         map.add(mount_rushmore_road)
         //mount rushmore trails lines
@@ -251,6 +283,7 @@
      <!--Website title-->
      <h1>Mount Rushmore Map Guide</h1>
      <div id="viewDiv"></div>
+     
 
         <!--you can also use this space for internal scripts or stylesheets;
         place these within <script> or <style> tags-->
