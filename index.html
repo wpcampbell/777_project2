@@ -48,7 +48,8 @@
               "esri/widgets/Home",
               "esri/widgets/Directions",
               "esri/widgets/LayerList",
-              "esri/widgets/FeatureForm"], 
+              "esri/widgets/FeatureForm",
+              "esri/widgets/Editor"], 
               
               function (
                 esriConfig,
@@ -62,12 +63,14 @@
                 Home,
                 Directions,
                 LayerList,
-                FeatureForm) {
+                FeatureForm,
+                Editor) {
         //API KEY          
         esriConfig.apiKey = "AAPKf09779fada8e4edbaf17b893c40401a8jj7qpoWo6aq3GQgPw_-e7pWeaZY4XbcBiYua2Mc3-YV7Jd1JkLZV0l33TGImMRGQ";
         //map           
         const map = new Map({
           basemap: "arcgis-topographic" // Basemap layer service
+
         });
         //view
         const view = new MapView({
@@ -78,14 +81,18 @@
         });
         //things to add:
         //1.symbols for facilities
-        //2.FeatureForm to allow users to edit the reports
+        //2.Splash screen/ info about park
 
+        const editor = new Editor({
+          view: view
+        });
 
+        view.ui.add(editor, "bottom-left")
 
         // park safety popup
         const popupParkSafety = {
           "title": "Park Safety Hazard",
-          "content": "<b>Description: </b> {descriptio} <br> <b>Name: </b> {reporter} <br> <b>Type: </b> {type} <br> <b>Date: </b> {date} <br> <b>Time Reported: </b> {time}"
+          "content": "<b>Description: </b> {description} <br> <b>Name: </b> {reporter} <br> <b>Type: </b> {type} <br> <b>Date and Time: </b> {date} <br>"
         }
 
 
@@ -131,7 +138,7 @@
         const parkSafety = new FeatureLayer({
           url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/parkSafety/FeatureServer",
           renderer: trailheadsRenderer,
-          outFields: ["descriptio", "reporter", "type", "date", "time"],
+          outFields: ["descriptio", "reporter", "type", "date"],
           popupTemplate: popupParkSafety
         });
 
@@ -173,6 +180,7 @@
 
           // Add widget to the top right corner of the view
           view.ui.add(layerList, "bottom-right");
+          
         });
         //directions widget (pending)
         // let directionsWidget = new Directions({
@@ -281,7 +289,21 @@
   <body>
      <!--put your initial page content here-->
      <!--Website title-->
-     <h1>Mount Rushmore Map Guide</h1>
+    <div class="float-container">
+
+      <div class="float-child">
+        <h1>Mount Rushmore Map Guide</h1>
+      </div>
+
+      <div class="float-child">
+        <button class="w3-button w3-xlarge">Information</button>
+        
+
+      </div>
+
+    </div>
+
+     
      <div id="viewDiv"></div>
      
 
