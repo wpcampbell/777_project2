@@ -81,7 +81,17 @@
         });
         //things to add:
         //1.symbols for facilities
-        //2.Splash screen/ info about park
+        const facilitiesRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "https://cdn.arcgis.com/sharing/rest/content/items/220936cc6ed342c9937abd8f180e7d1e/resources/styles/thumbnails/esri-pin-1.png",
+          "width": "64px",
+          "height": "64px"
+        }
+      }
+
+
 
         const editor = new Editor({
           view: view
@@ -96,7 +106,7 @@
         }
 
 
-        const trailheadsRenderer = {
+        const customPointRenderer = {
         "type": "simple",
         "symbol": {
           "type": "picture-marker",
@@ -137,7 +147,7 @@
         //park safety editable points
         const parkSafety = new FeatureLayer({
           url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/parkSafety/FeatureServer",
-          renderer: trailheadsRenderer,
+          renderer: customPointRenderer,
           outFields: ["descriptio", "reporter", "type", "date"],
           popupTemplate: popupParkSafety
         });
@@ -148,7 +158,8 @@
         const mount_rushmore_facilities = new FeatureLayer({
         url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/mt_rushmore_facilities/FeatureServer",
         outFields: ["fac_type"],
-        popupTemplate: popupFacilities
+        popupTemplate: popupFacilities,
+        renderer:facilitiesRenderer
         });
         
 
@@ -289,14 +300,48 @@
   <body>
      <!--put your initial page content here-->
      <!--Website title-->
-    <div class="float-container">
 
-      <div class="float-child">
         <h1>Mount Rushmore Map Guide</h1>
       </div>
+      
+      <div class="popup">
+        <button id="close">&times;</button>
+      <center>
+        <h2>Welcome!</h2>
+        <p>
+            This is a website designed to add interaction to your visit to Mount Rushmore National Park! <br> 
+            Have a look around the website to see if you can find all that you can do with it! <br>
+            <i>Refresh your browser window to see this popup again.</i>
+        </p>
+
+        <h2>Information about the park</h2>
+        <p>
+          Mount Rushmore National Memorial is a massive sculpture carved into Mount Rushmore in the Black Hills region of South Dakota.<br>
+           Completed in 1941 under the direction of Gutzon Borglum and his son Lincoln, the sculpture's roughly 60-ft.-high granite faces depict <br>
+           U.S. presidents George Washington, Thomas Jefferson, Theodore Roosevelt and Abraham Lincoln. The site also features a museum with <br>
+           interactive exhibits. 
+        </p>
+        
+        <img src="img/mt-rush.jpeg" width="700" height="500"</center>
+    </div>
+    <!--Script-->
+    <script type="text/javascript">
+window.addEventListener("load", function(){
+    setTimeout(
+        function open(event){
+            document.querySelector(".popup").style.display = "block";
+        },
+        2000 
+    )
+});
+
+
+document.querySelector("#close").addEventListener("click", function(){
+    document.querySelector(".popup").style.display = "none";
+});
+    </script>
 
       <div class="float-child">
-        <button class="w3-button w3-xlarge">Information</button>
         
 
       </div>
@@ -305,6 +350,7 @@
 
      
      <div id="viewDiv"></div>
+     
      
 
         <!--you can also use this space for internal scripts or stylesheets;
