@@ -49,7 +49,8 @@
               "esri/widgets/Directions",
               "esri/widgets/LayerList",
               "esri/widgets/FeatureForm",
-              "esri/widgets/Editor"], 
+              "esri/widgets/Editor",
+              "esri/widgets/Expand"], 
               
               function (
                 esriConfig,
@@ -64,7 +65,8 @@
                 Directions,
                 LayerList,
                 FeatureForm,
-                Editor) {
+                Editor,
+                Expand) {
         //API KEY          
         esriConfig.apiKey = "AAPKf09779fada8e4edbaf17b893c40401a8jj7qpoWo6aq3GQgPw_-e7pWeaZY4XbcBiYua2Mc3-YV7Jd1JkLZV0l33TGImMRGQ";
         //map           
@@ -97,7 +99,16 @@
           view: view
         });
 
-        view.ui.add(editor, "bottom-left")
+        // view.ui.add(editor, "bottom-left")
+        
+        editorExpand = new Expand({
+          expandIconClass: "esri-icon-edit",
+          view: view,
+          content: editor,
+          expandTooltip: "Report a Safety Hazard"
+        });
+
+        view.ui.add(editorExpand, "bottom-left")
 
         // park safety popup
         const popupParkSafety = {
@@ -189,8 +200,18 @@
             view: view
           });
 
+        layerListExpand = new Expand({
+          expandIconClass: "esri-icon-layer-list",
+          view: view,
+          content: layerList,
+          expandTooltip: "Expand the list of park layers"
+        });
+
+        view.ui.add(layerListExpand, "bottom-right")
+
+
           // Add widget to the top right corner of the view
-          view.ui.add(layerList, "bottom-right");
+          // view.ui.add(layerList, "bottom-right");
           
         });
         //directions widget (pending)
@@ -290,7 +311,16 @@
           view: view
         });
 
-        view.ui.add(legend, "top-right");
+        // view.ui.add(legend, "top-right");
+
+        legendExpand = new Expand({
+          expandIconClass: "esri-icon-legend",
+          view: view,
+          content: legend,
+          expandTooltip: "Expand the legend"
+        });
+
+        view.ui.add(legendExpand, "top-right")
 
 
       });
